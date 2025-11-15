@@ -1,15 +1,49 @@
-import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Search, LogIn, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ProductCard } from "@/components/ProductCard";
 import { Input } from "@/components/ui/input";
-import { products } from "@/data/products";
+import { Button } from "@/components/ui/button";
+
+interface Product {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  stock: number;
+  category: string;
+  image: string | null;
+}
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('name');
+    
+    if (!error && data) {
+      setProducts(data);
+    }
+    setLoading(false);
+  };
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
@@ -21,7 +55,7 @@ const Index = () => {
       
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [products, selectedCategory, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,6 +71,20 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 bg-gradient-to-b from-hero-gradient-start to-hero-gradient-end">
         <div className="container mx-auto max-w-4xl text-center">
+          <div className="flex justify-center gap-3 mb-6">
+            {!user ? (
+              <Button onClick={() => navigate("/auth")} variant="secondary">
+                <LogIn className="mr-2 h-4 w-4" />
+                Login / Daftar
+              </Button>
+            ) : isAdmin ? (
+              <Button onClick={() => navigate("/admin")} variant="secondary">
+                <Shield className="mr-2 h-4 w-4" />
+                Admin Dashboard
+              </Button>
+            ) : null}
+          </div>
+          
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-6 leading-tight">
             Temukan Aki yang Anda Butuhkan Bersama Toko Aki
           </h1>
@@ -74,7 +122,11 @@ const Index = () => {
             </p>
           </div>
 
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-16">
+              <p className="text-xl text-muted-foreground">Loading...</p>
+            </div>
+          ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} {...product} />
@@ -83,11 +135,13 @@ const Index = () => {
           ) : (
             <div className="text-center py-16">
               <p className="text-xl text-muted-foreground">
-                Tidak ada produk yang ditemukan
+                {products.length === 0 ? "Belum ada produk. Admin dapat menambahkan produk melalui dashboard." : "Tidak ada produk yang ditemukan"}
               </p>
-              <p className="text-muted-foreground mt-2">
-                Coba ubah kata kunci pencarian atau kategori
-              </p>
+              {products.length > 0 && (
+                <p className="text-muted-foreground mt-2">
+                  Coba ubah kata kunci pencarian atau kategori
+                </p>
+              )}
             </div>
           )}
         </div>
