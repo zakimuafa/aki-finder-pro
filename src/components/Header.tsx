@@ -16,7 +16,6 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-
           <span className="text-white font-bold text-xl hidden sm:inline">
             DR.Battery
           </span>
@@ -28,7 +27,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
               onClick={() => navigate("/auth")}
               variant="secondary"
               size="sm"
-              className="hidden sm:flex"
+              className="flex"
             >
               <LogIn className="mr-2 h-4 w-4" />
               Login / Daftar

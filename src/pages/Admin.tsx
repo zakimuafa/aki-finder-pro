@@ -24,9 +24,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus, LogOut, Upload, X } from "lucide-react";
+import { Pencil, Trash2, Plus, LogOut } from "lucide-react";
 import { z } from "zod";
-import { ImageUpload } from "@/components/ImageUpload";
 
 const categories = [
   "Aki Motor",
@@ -67,7 +66,6 @@ const Admin = () => {
     type: "",
     stock: 0,
     category: "",
-    image: null as string | null,
   });
 
   useEffect(() => {
@@ -94,7 +92,12 @@ const Admin = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", type: "", price: 0, stock: 0, category: "" });
+    setFormData({
+      name: "",
+      type: "",
+      stock: 0,
+      category: "",
+    });
     setEditingId(null);
     setErrors({});
   };
@@ -126,10 +129,10 @@ const Admin = () => {
 
       if (editingId) {
         const { error } = await supabase
-          .from('products')
-          .update(formData)
-          .eq('id', editingId);
-        
+          .from("products")
+          .update(productData)
+          .eq("id", editingId);
+
         if (error) throw error;
 
         toast({
@@ -137,10 +140,8 @@ const Admin = () => {
           description: "Produk berhasil diupdate",
         });
       } else {
-        const { error } = await supabase
-          .from('products')
-          .insert([formData]);
-        
+        const { error } = await supabase.from("products").insert([productData]);
+
         if (error) throw error;
 
         toast({
@@ -168,7 +169,6 @@ const Admin = () => {
       type: product.type,
       stock: product.stock,
       category: product.category,
-      image: product.image,
     });
     setEditingId(product.id);
   };
@@ -262,19 +262,9 @@ const Admin = () => {
                       }
                       className={errors.type ? "border-destructive" : ""}
                     />
-                    {errors.type && <p className="text-sm text-destructive">{errors.type}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Harga (Rp)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                      className={errors.price ? "border-destructive" : ""}
-                    />
-                    {errors.price && <p className="text-sm text-destructive">{errors.price}</p>}
+                    {errors.type && (
+                      <p className="text-sm text-destructive">{errors.type}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -323,12 +313,6 @@ const Admin = () => {
                       </p>
                     )}
                   </div>
-
-                  <ImageUpload
-                    value={formData.image}
-                    onChange={(url) => setFormData({ ...formData, image: url })}
-                    disabled={isSubmitting}
-                  />
 
                   <div className="flex gap-2">
                     <Button
@@ -380,17 +364,21 @@ const Admin = () => {
                     <TableBody>
                       {products.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground">
+                          <TableCell
+                            colSpan={5}
+                            className="text-center text-muted-foreground"
+                          >
                             Belum ada produk
                           </TableCell>
                         </TableRow>
                       ) : (
                         products.map((product) => (
                           <TableRow key={product.id}>
-                            <TableCell className="font-medium">{product.name}</TableCell>
+                            <TableCell className="font-medium">
+                              {product.name}
+                            </TableCell>
                             <TableCell>{product.type}</TableCell>
                             <TableCell>{product.category}</TableCell>
-                            <TableCell>Rp {product.price.toLocaleString('id-ID')}</TableCell>
                             <TableCell>{product.stock}</TableCell>
                             <TableCell className="text-right">
                               <Button
