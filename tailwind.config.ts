@@ -57,6 +57,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        hero: {
+          "gradient-start": "hsl(var(--hero-gradient-start))",
+          "gradient-end": "hsl(var(--hero-gradient-end))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
