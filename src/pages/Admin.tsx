@@ -39,7 +39,6 @@ const categories = [
 const productSchema = z.object({
   name: z.string().trim().min(1, "Nama produk tidak boleh kosong").max(200),
   type: z.string().trim().min(1, "Tipe tidak boleh kosong").max(100),
-  price: z.number().min(0, "Harga harus positif"),
   stock: z.number().int().min(0, "Stok harus positif"),
   category: z.string().min(1, "Kategori harus dipilih"),
 });
@@ -48,10 +47,8 @@ interface Product {
   id: string;
   name: string;
   type: string;
-  price: number;
   stock: number;
   category: string;
-  image: string | null;
 }
 
 const Admin = () => {
@@ -67,12 +64,9 @@ const Admin = () => {
   const [formData, setFormData] = useState({
     name: "",
     type: "",
-    price: 0,
     stock: 0,
     category: "",
-    image: null as File | null,
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -101,26 +95,11 @@ const Admin = () => {
     setFormData({
       name: "",
       type: "",
-      price: 0,
       stock: 0,
       category: "",
-      image: null,
     });
-    setImagePreview(null);
     setEditingId(null);
     setErrors({});
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,33 +119,12 @@ const Admin = () => {
     setIsSubmitting(true);
 
     try {
-      let imageUrl = null;
-
-      if (formData.image) {
-        const fileExt = formData.image.name.split(".").pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `products/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("product-images")
-          .upload(filePath, formData.image);
-
-        if (uploadError) throw uploadError;
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("product-images").getPublicUrl(filePath);
-
-        imageUrl = publicUrl;
-      }
-
       const productData = {
         name: formData.name,
         type: formData.type,
-        price: formData.price,
         stock: formData.stock,
         category: formData.category,
-        image: imageUrl,
+        price: 0, // Default price since it's required by database schema
       };
 
       if (editingId) {
@@ -209,12 +167,9 @@ const Admin = () => {
     setFormData({
       name: product.name,
       type: product.type,
-      price: product.price,
       stock: product.stock,
       category: product.category,
-      image: null,
     });
-    setImagePreview(product.image);
     setEditingId(product.id);
   };
 
@@ -313,25 +268,6 @@ const Admin = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">Harga (Rp)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          price: Number(e.target.value),
-                        })
-                      }
-                      className={errors.price ? "border-destructive" : ""}
-                    />
-                    {errors.price && (
-                      <p className="text-sm text-destructive">{errors.price}</p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
                     <Label htmlFor="stock">Stok</Label>
                     <Input
                       id="stock"
@@ -378,29 +314,6 @@ const Admin = () => {
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Gambar Produk</Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className={errors.image ? "border-destructive" : ""}
-                    />
-                    {imagePreview && (
-                      <div className="mt-2">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="w-32 h-32 object-cover rounded-md border"
-                        />
-                      </div>
-                    )}
-                    {errors.image && (
-                      <p className="text-sm text-destructive">{errors.image}</p>
-                    )}
-                  </div>
-
                   <div className="flex gap-2">
                     <Button
                       type="submit"
@@ -444,7 +357,6 @@ const Admin = () => {
                         <TableHead>Nama</TableHead>
                         <TableHead>Tipe</TableHead>
                         <TableHead>Kategori</TableHead>
-                        <TableHead>Harga</TableHead>
                         <TableHead>Stok</TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
                       </TableRow>
@@ -453,7 +365,7 @@ const Admin = () => {
                       {products.length === 0 ? (
                         <TableRow>
                           <TableCell
-                            colSpan={6}
+                            colSpan={5}
                             className="text-center text-muted-foreground"
                           >
                             Belum ada produk
@@ -467,9 +379,6 @@ const Admin = () => {
                             </TableCell>
                             <TableCell>{product.type}</TableCell>
                             <TableCell>{product.category}</TableCell>
-                            <TableCell>
-                              Rp {product.price.toLocaleString("id-ID")}
-                            </TableCell>
                             <TableCell>{product.stock}</TableCell>
                             <TableCell className="text-right">
                               <Button

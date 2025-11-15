@@ -13,12 +13,12 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src={logo} alt="Toko Aki" className="h-10 w-10 object-contain" />
-          <span className="text-secondary font-bold text-xl hidden sm:inline">
-            Toko Aki
+
+          <span className="text-white font-bold text-xl hidden sm:inline">
+            DR.Battery
           </span>
         </div>
 
@@ -50,7 +50,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                 variant="ghost"
                 size="icon"
                 onClick={signOut}
-                className="text-secondary hover:text-secondary hover:bg-secondary/10"
+                className="text-white hover:text-white hover:bg-white/10"
                 title="Logout"
               >
                 <LogOut className="h-5 w-5" />
@@ -62,7 +62,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={onMenuClick}
-            className="text-secondary hover:text-secondary hover:bg-secondary/10"
+            className="text-white hover:text-white hover:bg-white/10"
           >
             <Menu className="h-6 w-6" />
           </Button>

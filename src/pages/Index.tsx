@@ -13,10 +13,8 @@ interface Product {
   id: string;
   name: string;
   type: string;
-  price: number;
   stock: number;
   category: string;
-  image: string | null;
 }
 
 const Index = () => {
@@ -73,8 +71,8 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 bg-gradient-to-b from-hero-gradient-start to-hero-gradient-end">
         <div className="container mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-6 leading-tight">
-            Temukan Aki yang Anda Butuhkan Bersama Toko Aki
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            Temukan Stock aki 
           </h1>
 
           <div className="relative max-w-2xl mx-auto">
@@ -90,7 +88,7 @@ const Index = () => {
 
           {selectedCategory && (
             <div className="mt-4">
-              <span className="inline-block bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-semibold">
+              <span className="inline-block bg-secondary/20 text-white px-4 py-2 rounded-full text-sm font-semibold">
                 Kategori: {selectedCategory}
               </span>
             </div>
