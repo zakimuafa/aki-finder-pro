@@ -35,10 +35,10 @@ const Index = () => {
   const loadProducts = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('name');
-    
+      .from("products")
+      .select("*")
+      .order("name");
+
     if (!error && data) {
       setProducts(data);
     }
@@ -46,13 +46,15 @@ const Index = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const matchesCategory = !selectedCategory || product.category === selectedCategory;
-      const matchesSearch = !searchQuery || 
+    return products.filter((product) => {
+      const matchesCategory =
+        !selectedCategory || product.category === selectedCategory;
+      const matchesSearch =
+        !searchQuery ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       return matchesCategory && matchesSearch;
     });
   }, [products, selectedCategory, searchQuery]);
@@ -60,8 +62,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header onMenuClick={() => setIsSidebarOpen(true)} />
-      
-      <Sidebar 
+
+      <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         selectedCategory={selectedCategory}
@@ -71,24 +73,10 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 bg-gradient-to-b from-hero-gradient-start to-hero-gradient-end">
         <div className="container mx-auto max-w-4xl text-center">
-          <div className="flex justify-center gap-3 mb-6">
-            {!user ? (
-              <Button onClick={() => navigate("/auth")} variant="secondary">
-                <LogIn className="mr-2 h-4 w-4" />
-                Login / Daftar
-              </Button>
-            ) : isAdmin ? (
-              <Button onClick={() => navigate("/admin")} variant="secondary">
-                <Shield className="mr-2 h-4 w-4" />
-                Admin Dashboard
-              </Button>
-            ) : null}
-          </div>
-          
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-6 leading-tight">
             Temukan Aki yang Anda Butuhkan Bersama Toko Aki
           </h1>
-          
+
           <div className="relative max-w-2xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
             <Input
@@ -135,7 +123,9 @@ const Index = () => {
           ) : (
             <div className="text-center py-16">
               <p className="text-xl text-muted-foreground">
-                {products.length === 0 ? "Belum ada produk. Admin dapat menambahkan produk melalui dashboard." : "Tidak ada produk yang ditemukan"}
+                {products.length === 0
+                  ? "Belum ada produk. Admin dapat menambahkan produk melalui dashboard."
+                  : "Tidak ada produk yang ditemukan"}
               </p>
               {products.length > 0 && (
                 <p className="text-muted-foreground mt-2">
