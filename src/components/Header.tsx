@@ -39,7 +39,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                   onClick={() => navigate("/admin")}
                   variant="secondary"
                   size="sm"
-                  className="hidden sm:flex"
+                  className="flex"
                 >
                   <Shield className="mr-2 h-4 w-4" />
                   Admin
