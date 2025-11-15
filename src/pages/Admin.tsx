@@ -8,15 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { Pencil, Trash2, Plus, LogOut } from "lucide-react";
 import { z } from "zod";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const categories = [
   "Aki Motor",
-  "Aki Mobil", 
+  "Aki Mobil",
   "Aki Second",
   "Klem",
   "Kondom Kabel Paralel",
@@ -50,13 +64,14 @@ const Admin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   const [formData, setFormData] = useState({
     name: "",
     type: "",
     price: 0,
     stock: 0,
     category: "",
+    image: null as string | null,
   });
 
   useEffect(() => {
@@ -73,17 +88,24 @@ const Admin = () => {
 
   const loadProducts = async () => {
     const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
+
     if (!error && data) {
       setProducts(data);
     }
   };
 
   const resetForm = () => {
-    setFormData({ name: "", type: "", price: 0, stock: 0, category: "" });
+    setFormData({
+      name: "",
+      type: "",
+      price: 0,
+      stock: 0,
+      category: "",
+      image: null,
+    });
     setEditingId(null);
     setErrors({});
   };
@@ -91,7 +113,7 @@ const Admin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
-    
+
     const validation = productSchema.safeParse(formData);
     if (!validation.success) {
       const newErrors: { [key: string]: string } = {};
@@ -103,33 +125,31 @@ const Admin = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       if (editingId) {
         const { error } = await supabase
-          .from('products')
+          .from("products")
           .update(formData)
-          .eq('id', editingId);
-        
+          .eq("id", editingId);
+
         if (error) throw error;
-        
+
         toast({
           title: "Berhasil",
           description: "Produk berhasil diupdate",
         });
       } else {
-        const { error } = await supabase
-          .from('products')
-          .insert([formData]);
-        
+        const { error } = await supabase.from("products").insert([formData]);
+
         if (error) throw error;
-        
+
         toast({
           title: "Berhasil",
           description: "Produk berhasil ditambahkan",
         });
       }
-      
+
       resetForm();
       loadProducts();
     } catch (error: any) {
@@ -150,18 +170,16 @@ const Admin = () => {
       price: product.price,
       stock: product.stock,
       category: product.category,
+      image: product.image,
     });
     setEditingId(product.id);
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Yakin ingin menghapus produk ini?")) return;
-    
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', id);
-    
+
+    const { error } = await supabase.from("products").delete().eq("id", id);
+
     if (!error) {
       toast({
         title: "Berhasil",
@@ -192,7 +210,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header onMenuClick={() => setIsSidebarOpen(true)} />
-      <Sidebar 
+      <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         selectedCategory={null}
@@ -202,7 +220,9 @@ const Admin = () => {
       <div className="pt-24 pb-12 px-4">
         <div className="container mx-auto max-w-7xl">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-secondary">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold text-secondary">
+              Admin Dashboard
+            </h1>
             <Button variant="destructive" onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Logout
@@ -224,10 +244,14 @@ const Admin = () => {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className={errors.name ? "border-destructive" : ""}
                     />
-                    {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                    {errors.name && (
+                      <p className="text-sm text-destructive">{errors.name}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -235,10 +259,14 @@ const Admin = () => {
                     <Input
                       id="type"
                       value={formData.type}
-                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, type: e.target.value })
+                      }
                       className={errors.type ? "border-destructive" : ""}
                     />
-                    {errors.type && <p className="text-sm text-destructive">{errors.type}</p>}
+                    {errors.type && (
+                      <p className="text-sm text-destructive">{errors.type}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -247,10 +275,17 @@ const Admin = () => {
                       id="price"
                       type="number"
                       value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          price: Number(e.target.value),
+                        })
+                      }
                       className={errors.price ? "border-destructive" : ""}
                     />
-                    {errors.price && <p className="text-sm text-destructive">{errors.price}</p>}
+                    {errors.price && (
+                      <p className="text-sm text-destructive">{errors.price}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -259,36 +294,73 @@ const Admin = () => {
                       id="stock"
                       type="number"
                       value={formData.stock}
-                      onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stock: Number(e.target.value),
+                        })
+                      }
                       className={errors.stock ? "border-destructive" : ""}
                     />
-                    {errors.stock && <p className="text-sm text-destructive">{errors.stock}</p>}
+                    {errors.stock && (
+                      <p className="text-sm text-destructive">{errors.stock}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="category">Kategori</Label>
-                    <Select 
-                      value={formData.category} 
-                      onValueChange={(value) => setFormData({ ...formData, category: value })}
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, category: value })
+                      }
                     >
-                      <SelectTrigger className={errors.category ? "border-destructive" : ""}>
+                      <SelectTrigger
+                        className={errors.category ? "border-destructive" : ""}
+                      >
                         <SelectValue placeholder="Pilih kategori" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((cat) => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
+                    {errors.category && (
+                      <p className="text-sm text-destructive">
+                        {errors.category}
+                      </p>
+                    )}
                   </div>
 
+                  <ImageUpload
+                    value={formData.image}
+                    onChange={(url) => setFormData({ ...formData, image: url })}
+                    disabled={isSubmitting}
+                  />
+
                   <div className="flex gap-2">
-                    <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                      {editingId ? "Update" : <><Plus className="mr-2 h-4 w-4" /> Tambah</>}
+                    <Button
+                      type="submit"
+                      className="flex-1"
+                      disabled={isSubmitting}
+                    >
+                      {editingId ? (
+                        "Update"
+                      ) : (
+                        <>
+                          <Plus className="mr-2 h-4 w-4" /> Tambah
+                        </>
+                      )}
                     </Button>
                     {editingId && (
-                      <Button type="button" variant="outline" onClick={resetForm}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={resetForm}
+                      >
                         Batal
                       </Button>
                     )}
@@ -300,7 +372,9 @@ const Admin = () => {
             {/* Table */}
             <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-foreground">Daftar Produk ({products.length})</CardTitle>
+                <CardTitle className="text-foreground">
+                  Daftar Produk ({products.length})
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
@@ -318,17 +392,33 @@ const Admin = () => {
                     <TableBody>
                       {products.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center text-muted-foreground">
+                          <TableCell
+                            colSpan={6}
+                            className="text-center text-muted-foreground"
+                          >
                             Belum ada produk
                           </TableCell>
                         </TableRow>
                       ) : (
                         products.map((product) => (
                           <TableRow key={product.id}>
-                            <TableCell className="font-medium">{product.name}</TableCell>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-3">
+                                {product.image && (
+                                  <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="w-10 h-10 object-cover rounded"
+                                  />
+                                )}
+                                {product.name}
+                              </div>
+                            </TableCell>
                             <TableCell>{product.type}</TableCell>
                             <TableCell>{product.category}</TableCell>
-                            <TableCell>Rp {product.price.toLocaleString('id-ID')}</TableCell>
+                            <TableCell>
+                              Rp {product.price.toLocaleString("id-ID")}
+                            </TableCell>
                             <TableCell>{product.stock}</TableCell>
                             <TableCell className="text-right">
                               <Button
