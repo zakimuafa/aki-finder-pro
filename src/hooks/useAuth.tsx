@@ -111,9 +111,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      console.log("Attempting to sign up user:", { email, fullName });
       const redirectUrl = `${window.location.origin}/`;
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -124,13 +125,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
 
+      console.log("Sign up result:", { data, error });
+
       if (error) {
+        console.error("Sign up error:", error);
         toast({
           title: "Registrasi Gagal",
           description: error.message,
           variant: "destructive",
         });
       } else {
+        console.log("Sign up successful, user data:", data);
         toast({
           title: "Registrasi Berhasil",
           description: "Akun Anda telah dibuat. Silakan login.",
@@ -139,6 +144,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       return { error };
     } catch (error: any) {
+      console.error("Sign up exception:", error);
       toast({
         title: "Registrasi Gagal",
         description: "Terjadi kesalahan saat registrasi",
