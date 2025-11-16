@@ -258,14 +258,23 @@ const Admin = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="type">Tipe / Volt</Label>
-                    <Input
-                      id="type"
+                    <Select
                       value={formData.type}
-                      onChange={(e) =>
-                        setFormData({ ...formData, type: e.target.value })
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, type: value })
                       }
-                      className={errors.type ? "border-destructive" : ""}
-                    />
+                    >
+                      <SelectTrigger
+                        className={errors.type ? "border-destructive" : ""}
+                      >
+                        <SelectValue placeholder="Pilih tipe / volt" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="12">12</SelectItem>
+                        <SelectItem value="24">24</SelectItem>
+                        <SelectItem value="Universal">Universal</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {errors.type && (
                       <p className="text-sm text-destructive">{errors.type}</p>
                     )}
