@@ -32,7 +32,8 @@ const categories = [
   "Aki Mobil",
   "Aki Second",
   "Klem",
-  "Kondom Kabel Paralel",
+  "Kondom",
+  "Kabel Paralel",
   "Aki Bekas",
 ];
 
