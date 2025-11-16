@@ -84,15 +84,20 @@ const Auth = () => {
     }
 
     setIsLoading(true);
+    console.log("Starting signup process...");
     const { error } = await signUp(
       signupData.email,
       signupData.password,
       signupData.fullName
     );
+    console.log("Signup process completed, error:", error);
     setIsLoading(false);
 
     if (!error) {
+      console.log("Signup successful, clearing form");
       setSignupData({ email: "", password: "", fullName: "" });
+    } else {
+      console.log("Signup failed with error:", error);
     }
   };
 

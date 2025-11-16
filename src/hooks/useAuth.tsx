@@ -112,6 +112,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       console.log("Attempting to sign up user:", { email, fullName });
+      console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+      console.log(
+        "Supabase Key exists:",
+        !!import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+      );
       const redirectUrl = `${window.location.origin}/`;
 
       const { data, error } = await supabase.auth.signUp({
@@ -126,6 +131,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       console.log("Sign up result:", { data, error });
+      console.log("User created:", data?.user);
+      console.log("Session:", data?.session);
 
       if (error) {
         console.error("Sign up error:", error);
@@ -136,10 +143,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       } else {
         console.log("Sign up successful, user data:", data);
-        toast({
-          title: "Registrasi Berhasil",
-          description: "Akun Anda telah dibuat. Silakan login.",
-        });
+        if (data?.user && !data?.session) {
+          toast({
+            title: "Registrasi Berhasil",
+            description: "Silakan cek email Anda untuk konfirmasi akun.",
+          });
+        } else {
+          toast({
+            title: "Registrasi Berhasil",
+            description: "Akun Anda telah dibuat. Silakan login.",
+          });
+        }
       }
 
       return { error };
