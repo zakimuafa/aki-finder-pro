@@ -9,7 +9,11 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string
+  ) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -24,27 +28,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Check admin role when session changes
-        if (session?.user) {
-          setTimeout(() => {
-            checkAdminRole(session.user.id);
-          }, 0);
-        } else {
-          setIsAdmin(false);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      // Check admin role when session changes
+      if (session?.user) {
+        setTimeout(() => {
+          checkAdminRole(session.user.id);
+        }, 0);
+      } else {
+        setIsAdmin(false);
       }
-    );
+    });
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         checkAdminRole(session.user.id);
       }
@@ -56,20 +60,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const checkAdminRole = async (userId: string) => {
     try {
+      console.log("Checking admin role for user:", userId);
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .eq('role', 'admin')
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
         .maybeSingle();
-      
+
+      console.log("Admin check result:", { data, error });
+
       if (!error && data) {
+        console.log("User is admin");
         setIsAdmin(true);
       } else {
+        console.log("User is not admin");
         setIsAdmin(false);
       }
     } catch (error) {
-      console.error('Error checking admin role:', error);
+      console.error("Error checking admin role:", error);
       setIsAdmin(false);
     }
   };
@@ -80,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       });
-      
+
       if (error) {
         toast({
           title: "Login Gagal",
@@ -88,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           variant: "destructive",
         });
       }
-      
+
       return { error };
     } catch (error: any) {
       toast({
@@ -103,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -114,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           },
         },
       });
-      
+
       if (error) {
         toast({
           title: "Registrasi Gagal",
@@ -127,7 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           description: "Akun Anda telah dibuat. Silakan login.",
         });
       }
-      
+
       return { error };
     } catch (error: any) {
       toast({
@@ -149,7 +158,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, isAdmin, loading, signIn, signUp, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
