@@ -10,14 +10,20 @@ interface SidebarProps {
 
 const categories = [
   "Aki Motor",
-  "Aki Mobil", 
+  "Aki Mobil",
   "Aki Second",
   "Klem",
-  "Kondom Kabel Paralel",
+  "Kondom",
+  "Kabel Paralel",
   "Aki Bekas",
 ];
 
-export const Sidebar = ({ isOpen, onClose, selectedCategory, onCategorySelect }: SidebarProps) => {
+export const Sidebar = ({
+  isOpen,
+  onClose,
+  selectedCategory,
+  onCategorySelect,
+}: SidebarProps) => {
   const handleCategoryClick = (category: string) => {
     onCategorySelect(selectedCategory === category ? null : category);
   };
@@ -26,16 +32,16 @@ export const Sidebar = ({ isOpen, onClose, selectedCategory, onCategorySelect }:
     <>
       {/* Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 transition-opacity"
           onClick={onClose}
         />
       )}
-      
+
       {/* Sidebar */}
-      <aside 
+      <aside
         className={`fixed top-0 right-0 h-full w-80 bg-sidebar border-l border-sidebar-border z-50 transform transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
@@ -49,7 +55,7 @@ export const Sidebar = ({ isOpen, onClose, selectedCategory, onCategorySelect }:
             <X className="h-5 w-5" />
           </Button>
         </div>
-        
+
         <nav className="p-4">
           <ul className="space-y-2">
             <li>
@@ -60,8 +66,8 @@ export const Sidebar = ({ isOpen, onClose, selectedCategory, onCategorySelect }:
                 }}
                 className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                   selectedCategory === null
-                    ? 'bg-secondary text-secondary-foreground font-semibold'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-accent'
+                    ? "bg-secondary text-secondary-foreground font-semibold"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-accent"
                 }`}
               >
                 Semua Produk
@@ -76,8 +82,8 @@ export const Sidebar = ({ isOpen, onClose, selectedCategory, onCategorySelect }:
                   }}
                   className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                     selectedCategory === category
-                      ? 'bg-secondary text-secondary-foreground font-semibold'
-                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-accent'
+                      ? "bg-secondary text-secondary-foreground font-semibold"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-accent"
                   }`}
                 >
                   {category}
