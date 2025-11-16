@@ -14,6 +14,7 @@ interface AuthContextType {
     password: string,
     fullName: string
   ) => Promise<{ error: any }>;
+  updateEmail: (newEmail: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -117,7 +118,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         "Supabase Key exists:",
         !!import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
       );
-      const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl =
+        "https://aki-finder-8s8pzr5bp-jeks-projects-078da0ba.vercel.app/";
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -189,6 +191,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const updateEmail = async (newEmail: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: newEmail,
+      });
+
+      if (error) {
+        toast({
+          title: "Update Email Gagal",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Update Email Berhasil",
+          description: "Silakan cek email baru Anda untuk konfirmasi.",
+        });
+      }
+
+      return { error };
+    } catch (error: any) {
+      toast({
+        title: "Update Email Gagal",
+        description: "Terjadi kesalahan saat update email",
+        variant: "destructive",
+      });
+      return { error };
+    }
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
@@ -200,7 +232,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, isAdmin, loading, signIn, signUp, signOut }}
+      value={{
+        user,
+        session,
+        isAdmin,
+        loading,
+        signIn,
+        signUp,
+        updateEmail,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>
