@@ -130,19 +130,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         },
       });
 
-      console.log("Sign up result:", { data, error });
+      console.log("Raw sign up response:", { data, error });
       console.log("User created:", data?.user);
       console.log("Session:", data?.session);
+      console.log("User ID:", data?.user?.id);
+      console.log("User email:", data?.user?.email);
 
       if (error) {
-        console.error("Sign up error:", error);
+        console.error("Sign up error details:", {
+          message: error.message,
+          status: error.status,
+          name: error.name,
+        });
         toast({
           title: "Registrasi Gagal",
           description: error.message,
           variant: "destructive",
         });
       } else {
-        console.log("Sign up successful, user data:", data);
+        console.log(
+          "Sign up successful, checking if user was created in auth.users..."
+        );
+
+        // Test if we can query the profiles table
+        if (data?.user?.id) {
+          console.log("Testing profiles table access...");
+          const { data: profileData, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", data.user.id)
+            .single();
+
+          console.log("Profile check result:", { profileData, profileError });
+        }
+
         if (data?.user && !data?.session) {
           toast({
             title: "Registrasi Berhasil",
