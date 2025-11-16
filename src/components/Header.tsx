@@ -1,5 +1,13 @@
-import { Menu, LogOut, LogIn, Shield } from "lucide-react";
+import { Menu, LogOut, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo-toko-aki.png";
@@ -22,40 +30,51 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
         </div>
 
         <div className="flex items-center gap-2">
-          {!user ? (
-            <Button
-              onClick={() => navigate("/auth")}
-              variant="secondary"
-              size="sm"
-              className="flex"
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              Login / Daftar
-            </Button>
-          ) : (
-            <>
-              {isAdmin && (
-                <Button
-                  onClick={() => navigate("/admin")}
-                  variant="secondary"
-                  size="sm"
-                  className="flex"
-                >
-                  <Shield className="mr-2 h-4 w-4" />
-                  Admin
-                </Button>
-              )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={signOut}
                 className="text-white hover:text-white hover:bg-white/10"
-                title="Logout"
               >
-                <LogOut className="h-5 w-5" />
+                <User className="h-5 w-5" />
               </Button>
-            </>
-          )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {user ? (
+                <>
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">Akun Saya</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Dashboard Admin
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuLabel>Belum Login</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/auth")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Login / Daftar
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button
             variant="ghost"
