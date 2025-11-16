@@ -64,7 +64,7 @@ const Admin = () => {
   const [formData, setFormData] = useState({
     name: "",
     type: "",
-    stock: 0,
+    stock: "" as string | number,
     category: "",
   });
 
@@ -106,7 +106,10 @@ const Admin = () => {
     e.preventDefault();
     setErrors({});
 
-    const validation = productSchema.safeParse(formData);
+    const validation = productSchema.safeParse({
+      ...formData,
+      stock: formData.stock === "" ? 0 : Number(formData.stock),
+    });
     if (!validation.success) {
       const newErrors: { [key: string]: string } = {};
       validation.error.errors.forEach((err) => {
@@ -122,7 +125,7 @@ const Admin = () => {
       const productData = {
         name: formData.name,
         type: formData.type,
-        stock: formData.stock,
+        stock: formData.stock === "" ? 0 : Number(formData.stock),
         category: formData.category,
         price: 0, // Default price since it's required by database schema
       };
@@ -276,10 +279,12 @@ const Admin = () => {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          stock: Number(e.target.value),
+                          stock:
+                            e.target.value === "" ? "" : Number(e.target.value),
                         })
                       }
                       className={errors.stock ? "border-destructive" : ""}
+                      placeholder="Masukkan jumlah stok"
                     />
                     {errors.stock && (
                       <p className="text-sm text-destructive">{errors.stock}</p>
