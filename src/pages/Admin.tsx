@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/Sidebar";
+import { AdminSidebar } from "@/components/AdminSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -212,11 +212,9 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header onMenuClick={() => setIsSidebarOpen(true)} />
-      <Sidebar
+      <AdminSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        selectedCategory={null}
-        onCategorySelect={() => {}}
       />
 
       <div className="pt-24 pb-12 px-4">
