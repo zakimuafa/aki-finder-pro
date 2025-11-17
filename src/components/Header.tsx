@@ -1,4 +1,4 @@
-import { Menu, LogOut, User, Shield } from "lucide-react";
+import { Menu, LogOut, User, Shield, ShoppingCart, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -59,11 +59,23 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                     Profil
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin")}>
-                      <Shield className="mr-2 h-4 w-4" />
-                      Dashboard Admin
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate("/admin")}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Dashboard Admin
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/cashier")}>
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                        Kasir
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/reports")}>
+                        <BarChart3 className="mr-2 h-4 w-4" />
+                        Laporan Penjualan
+                      </DropdownMenuItem>
+                    </>
                   )}
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
