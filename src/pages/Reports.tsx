@@ -12,7 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BarChart3, TrendingUp } from "lucide-react";
+import { BarChart3, TrendingUp, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -29,6 +31,7 @@ interface SalesReport {
   category: string;
   total_quantity: number;
   total_revenue: number;
+  sales_ids: string[]; // Track individual sale IDs for deletion
 }
 
 type Period = "week" | "month" | "year";
@@ -36,6 +39,7 @@ type Period = "week" | "month" | "year";
 const Reports = () => {
   const navigate = useNavigate();
   const { user, isAdmin, loading } = useAuth();
+  const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [period, setPeriod] = useState<Period>("month");
   const [reportData, setReportData] = useState<SalesReport[]>([]);
@@ -81,6 +85,7 @@ const Reports = () => {
         .from("sales")
         .select(
           `
+          id,
           product_id,
           quantity,
           total_price,
@@ -109,10 +114,12 @@ const Reports = () => {
             category: sale.products.category,
             total_quantity: 0,
             total_revenue: 0,
+            sales_ids: [],
           };
         }
         aggregated[productId].total_quantity += sale.quantity;
         aggregated[productId].total_revenue += sale.total_price;
+        aggregated[productId].sales_ids.push(sale.id);
       });
 
       // Convert to array and sort by quantity
@@ -136,6 +143,34 @@ const Reports = () => {
         return "Bulan Ini";
       case "year":
         return "Tahun Ini";
+    }
+  };
+
+  const handleDeleteSales = async (salesIds: string[], productName: string) => {
+    if (!confirm(`Yakin ingin menghapus semua transaksi penjualan untuk ${productName}?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("sales")
+        .delete()
+        .in("id", salesIds);
+
+      if (error) throw error;
+
+      toast({
+        title: "Berhasil",
+        description: "Transaksi penjualan berhasil dihapus",
+      });
+
+      loadReport();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -210,6 +245,7 @@ const Reports = () => {
                         <TableHead>Kategori</TableHead>
                         <TableHead className="text-right">Terjual</TableHead>
                         <TableHead className="text-right">Total Pendapatan</TableHead>
+                        <TableHead className="text-right">Aksi</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -228,6 +264,15 @@ const Reports = () => {
                           </TableCell>
                           <TableCell className="text-right font-semibold text-primary">
                             Rp {item.total_revenue.toLocaleString("id-ID")}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteSales(item.sales_ids, item.product_name)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
