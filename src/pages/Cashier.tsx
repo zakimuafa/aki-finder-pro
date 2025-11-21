@@ -160,7 +160,7 @@ const Cashier = () => {
 
   const getTotalPrice = () => {
     return cart.reduce(
-      (total, item) => total + item.customPrice! * item.quantity,
+      (total, item) => total + item.customPrice * item.quantity,
       0
     );
   };
@@ -182,7 +182,7 @@ const Cashier = () => {
       const salesData = cart.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
-        total_price: item.customPrice! * item.quantity,
+        total_price: item.customPrice * item.quantity,
         created_by: user?.id,
         customer_name: item.customerName,
       }));
@@ -376,7 +376,7 @@ const Cashier = () => {
                             <p className="font-bold text-foreground">
                               Rp{" "}
                               {(
-                                item.product.price * item.quantity
+                                item.customPrice * item.quantity
                               ).toLocaleString("id-ID")}
                             </p>
                             <Button
