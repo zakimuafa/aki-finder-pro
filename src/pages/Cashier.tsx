@@ -37,7 +37,7 @@ interface Product {
 interface CartItem {
   product: Product;
   quantity: number;
-  customPrice?: number;
+  customPrice: number;
   customerName?: string;
 }
 
@@ -89,6 +89,15 @@ const Cashier = () => {
       return;
     }
 
+    if (!customPrice || parseFloat(customPrice) <= 0) {
+      toast({
+        title: "Error",
+        description: "Masukkan harga yang valid",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const product = products.find((p) => p.id === selectedProductId);
     if (!product) return;
 
@@ -101,7 +110,7 @@ const Cashier = () => {
       return;
     }
 
-    const customPriceNum = customPrice ? parseFloat(customPrice) : undefined;
+    const customPriceNum = parseFloat(customPrice);
     const customerNameStr = customerName.trim() || undefined;
 
     const existingItem = cart.find((item) => item.product.id === product.id);
@@ -151,8 +160,7 @@ const Cashier = () => {
 
   const getTotalPrice = () => {
     return cart.reduce(
-      (total, item) =>
-        total + (item.customPrice || item.product.price) * item.quantity,
+      (total, item) => total + item.customPrice! * item.quantity,
       0
     );
   };
@@ -174,7 +182,7 @@ const Cashier = () => {
       const salesData = cart.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
-        total_price: (item.customPrice || item.product.price) * item.quantity,
+        total_price: item.customPrice! * item.quantity,
         created_by: user?.id,
         customer_name: item.customerName,
       }));
@@ -301,14 +309,15 @@ const Cashier = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="customPrice">Harga Custom (Opsional)</Label>
+                  <Label htmlFor="customPrice">Harga</Label>
                   <Input
                     id="customPrice"
                     type="number"
                     min="0"
-                    placeholder="Masukkan harga custom"
+                    placeholder="Masukkan harga"
                     value={customPrice}
                     onChange={(e) => setCustomPrice(e.target.value)}
+                    required
                   />
                 </div>
 
@@ -359,7 +368,7 @@ const Cashier = () => {
                               {item.product.type} - {item.product.category}
                             </p>
                             <p className="text-sm text-foreground">
-                              Rp {item.product.price.toLocaleString("id-ID")} x{" "}
+                              Rp {item.customPrice!.toLocaleString("id-ID")} x{" "}
                               {item.quantity}
                             </p>
                           </div>
