@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Plus, LogOut } from "lucide-react";
+import { Pencil, Trash2, Plus, LogOut, Search } from "lucide-react";
 import { z } from "zod";
 
 const categories = [
@@ -61,6 +61,7 @@ const Admin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -91,6 +92,10 @@ const Admin = () => {
       setProducts(data);
     }
   };
+
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const resetForm = () => {
     setFormData({
@@ -359,8 +364,19 @@ const Admin = () => {
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle className="text-foreground">
-                  Daftar Produk ({products.length})
+                  Daftar Produk ({filteredProducts.length})
                 </CardTitle>
+                <div className="flex items-center space-x-2 mt-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      placeholder="Cari produk..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
@@ -375,17 +391,19 @@ const Admin = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.length === 0 ? (
+                      {filteredProducts.length === 0 ? (
                         <TableRow>
                           <TableCell
                             colSpan={5}
                             className="text-center text-muted-foreground"
                           >
-                            Belum ada produk
+                            {searchQuery
+                              ? "Tidak ada produk yang cocok"
+                              : "Belum ada produk"}
                           </TableCell>
                         </TableRow>
                       ) : (
-                        products.map((product) => (
+                        filteredProducts.map((product) => (
                           <TableRow key={product.id}>
                             <TableCell className="font-medium">
                               {product.name}

@@ -8,15 +8,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { ShoppingCart, Trash2, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -30,6 +37,8 @@ interface Product {
 interface CartItem {
   product: Product;
   quantity: number;
+  customPrice?: number;
+  customerName?: string;
 }
 
 const Cashier = () => {
@@ -42,6 +51,9 @@ const Cashier = () => {
   const [selectedProductId, setSelectedProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [customPrice, setCustomPrice] = useState("");
+  const [customerName, setCustomerName] = useState("");
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -89,6 +101,9 @@ const Cashier = () => {
       return;
     }
 
+    const customPriceNum = customPrice ? parseFloat(customPrice) : undefined;
+    const customerNameStr = customerName.trim() || undefined;
+
     const existingItem = cart.find((item) => item.product.id === product.id);
     if (existingItem) {
       const newQuantity = existingItem.quantity + quantity;
@@ -103,16 +118,31 @@ const Cashier = () => {
       setCart(
         cart.map((item) =>
           item.product.id === product.id
-            ? { ...item, quantity: newQuantity }
+            ? {
+                ...item,
+                quantity: newQuantity,
+                customPrice: customPriceNum,
+                customerName: customerNameStr,
+              }
             : item
         )
       );
     } else {
-      setCart([...cart, { product, quantity }]);
+      setCart([
+        ...cart,
+        {
+          product,
+          quantity,
+          customPrice: customPriceNum,
+          customerName: customerNameStr,
+        },
+      ]);
     }
 
     setSelectedProductId("");
     setQuantity(1);
+    setCustomPrice("");
+    setCustomerName("");
   };
 
   const removeFromCart = (productId: string) => {
@@ -121,7 +151,8 @@ const Cashier = () => {
 
   const getTotalPrice = () => {
     return cart.reduce(
-      (total, item) => total + item.product.price * item.quantity,
+      (total, item) =>
+        total + (item.customPrice || item.product.price) * item.quantity,
       0
     );
   };
@@ -143,8 +174,9 @@ const Cashier = () => {
       const salesData = cart.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
-        total_price: item.product.price * item.quantity,
+        total_price: (item.customPrice || item.product.price) * item.quantity,
         created_by: user?.id,
+        customer_name: item.customerName,
       }));
 
       const { error } = await supabase.from("sales").insert(salesData);
@@ -205,21 +237,56 @@ const Cashier = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="product">Produk</Label>
-                  <Select
-                    value={selectedProductId}
-                    onValueChange={setSelectedProductId}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih produk" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {products.map((product) => (
-                        <SelectItem key={product.id} value={product.id}>
-                          {product.name} - {product.type} (Stok: {product.stock})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between"
+                      >
+                        {selectedProductId
+                          ? products.find(
+                              (product) => product.id === selectedProductId
+                            )?.name
+                          : "Pilih produk..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Cari produk..." />
+                        <CommandEmpty>Tidak ada produk ditemukan.</CommandEmpty>
+                        <CommandGroup>
+                          {products.map((product) => (
+                            <CommandItem
+                              key={product.id}
+                              value={product.name}
+                              onSelect={() => {
+                                setSelectedProductId(
+                                  selectedProductId === product.id
+                                    ? ""
+                                    : product.id
+                                );
+                                setOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedProductId === product.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {product.name} - {product.type} (Stok:{" "}
+                              {product.stock})
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 <div className="space-y-2">
@@ -230,6 +297,31 @@ const Cashier = () => {
                     min="1"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="customPrice">Harga Custom (Opsional)</Label>
+                  <Input
+                    id="customPrice"
+                    type="number"
+                    min="0"
+                    placeholder="Masukkan harga custom"
+                    value={customPrice}
+                    onChange={(e) => setCustomPrice(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="customerName">
+                    Nama Tuan/Toko (Opsional)
+                  </Label>
+                  <Input
+                    id="customerName"
+                    type="text"
+                    placeholder="Masukkan nama tuan atau toko"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
                   />
                 </div>
 
