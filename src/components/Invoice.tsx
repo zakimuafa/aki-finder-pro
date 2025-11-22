@@ -79,7 +79,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
           <div className="mb-3">
             <table className="w-full border-collapse border-2 border-gray-800 text-xs">
               <thead>
-                <tr className="bg-gray-700 text-white">
+                <tr className="bg-gray-200 text-black">
                   <th className="border border-gray-800 px-1.5 py-0.5 text-center font-semibold w-[10%]">
                     Banyaknya
                   </th>
