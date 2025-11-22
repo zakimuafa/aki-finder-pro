@@ -145,23 +145,23 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
             {/* Right Column - Payment Details */}
             <div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2">
-                <div className="flex justify-between mb-1">
-                  <p className="text-xs font-semibold text-gray-700">JUMLAH:</p>
-                  <p className="text-xs text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
+              <div className="border-2 border-gray-800 p-2 mb-2">
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
+                  <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
                 </div>
-                <div className="flex justify-between mb-1">
-                  <p className="text-xs font-semibold text-gray-700">UANG MUKA:</p>
-                  <p className="text-xs text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-700">JUMLAH:</p>
+                  <p className="text-sm text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
                 </div>
-                <div className="flex justify-between border-t-2 border-gray-800 pt-1">
-                  <p className="text-xs font-bold text-gray-700">SISA:</p>
-                  <p className="text-xs font-bold text-gray-700">Rp {(getTotalPrice() - (cart[0]?.downPayment || 0)).toLocaleString("id-ID")}</p>
+                <div className="flex justify-between border-t-2 border-gray-800 pt-2">
+                  <p className="text-sm font-bold text-gray-700">TOTAL:</p>
+                  <p className="text-sm font-bold text-gray-700">Rp {(getTotalPrice() - (cart[0]?.downPayment || 0)).toLocaleString("id-ID")}</p>
                 </div>
               </div>
               
               {/* Signature Section */}
-              <div className="border-2 border-gray-800 p-1.5">
+              <div className="mt-2">
                 <p className="text-xs text-center text-gray-700 mb-8">Hormat Kami,</p>
                 <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
               </div>
