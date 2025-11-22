@@ -15,6 +15,7 @@ interface CartItem {
   customPrice: number;
   customerName?: string;
   transactionDate: string;
+  warrantyMonths: number;
 }
 
 interface InvoiceProps {
@@ -33,6 +34,12 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
       (total, item) => total + item.customPrice * item.quantity,
       0
     );
+  };
+
+  const getWarrantyEndDate = (transactionDate: string, months: number) => {
+    const date = new Date(transactionDate);
+    date.setMonth(date.getMonth() + months);
+    return date.toLocaleDateString("id-ID");
   };
 
   return (
@@ -128,7 +135,12 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               </div>
               <div className="border-2 border-gray-800 p-3">
                 <p className="text-sm font-semibold text-gray-700 mb-2">GARANSI:</p>
-                <p className="text-sm text-gray-700">Sesuai ketentuan pabrik</p>
+                <p className="text-sm text-gray-700">
+                  {cart[0]?.warrantyMonths} Bulan
+                </p>
+                <p className="text-sm text-gray-700">
+                  S/d: {cart[0] && getWarrantyEndDate(cart[0].transactionDate, cart[0].warrantyMonths)}
+                </p>
               </div>
             </div>
 

@@ -78,6 +78,7 @@ export type Database = {
           quantity: number
           sale_date: string
           total_price: number
+          warranty_months: number | null
         }
         Insert: {
           created_at?: string
@@ -88,6 +89,7 @@ export type Database = {
           quantity: number
           sale_date?: string
           total_price: number
+          warranty_months?: number | null
         }
         Update: {
           created_at?: string
@@ -98,6 +100,7 @@ export type Database = {
           quantity?: number
           sale_date?: string
           total_price?: number
+          warranty_months?: number | null
         }
         Relationships: [
           {
