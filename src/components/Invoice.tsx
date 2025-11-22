@@ -67,9 +67,9 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
           {/* Customer Info */}
           <div className="mb-3">
-            <div className="border-2 border-gray-800 p-1.5">
+            <div className="border-2 border-gray-800 p-1.5 flex items-center gap-2">
               <p className="text-xs font-semibold text-gray-700">TUAN/TOKO:</p>
-              <p className="text-xs text-gray-700 min-h-[16px]">
+              <p className="text-xs text-gray-700">
                 {cart[0]?.customerName || "-"}
               </p>
             </div>
