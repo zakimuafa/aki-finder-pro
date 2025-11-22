@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Printer } from "lucide-react";
+import logo from "@/assets/logo-toko-aki.png";
 
 interface CartItem {
   product: {
@@ -38,21 +38,36 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div id="invoice-content" className="print:block">
+        <div id="invoice-content" className="print:block text-black">
           {/* Invoice Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h1>
-            <h2 className="text-xl font-semibold text-gray-600">Toko Aki</h2>
-            <p className="text-sm text-gray-500">
-              Tanggal: {new Date().toLocaleDateString("id-ID")}
-            </p>
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-center gap-4">
+              <img src={logo} alt="Logo" className="w-20 h-20" />
+              <div>
+                <h1 className="text-4xl font-bold text-blue-600 mb-1">Dr. Battery</h1>
+                <p className="text-sm text-gray-700">Jl. Raya No. 123, Jakarta</p>
+                <p className="text-sm text-gray-700">Telp: 021-12345678</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-700">
+                Tanggal: {cart[0]?.transactionDate || new Date().toLocaleDateString("id-ID")}
+              </p>
+              <p className="text-sm text-gray-700">Jakarta</p>
+            </div>
           </div>
 
           {/* Customer Info */}
-          {cart[0]?.customerName && (
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-700 mb-2">Kepada:</h3>
-              <p className="text-gray-600">{cart[0].customerName}</p>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="border-2 border-gray-800 p-2">
+              <p className="text-sm font-semibold text-gray-700">TUAN:</p>
+              <p className="text-sm text-gray-700 min-h-[20px]">
+                {cart[0]?.customerName || "-"}
+              </p>
+            </div>
+            <div className="border-2 border-gray-800 p-2">
+              <p className="text-sm font-semibold text-gray-700">TOKO:</p>
+              <p className="text-sm text-gray-700 min-h-[20px]">-</p>
             </div>
           </div>
 
@@ -78,17 +93,17 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               <tbody>
                 {cart.map((item, index) => (
                   <tr key={index}>
-                    <td className="border border-gray-800 px-3 py-2 text-center">
+                    <td className="border border-gray-800 px-3 py-2 text-center text-gray-700">
                       {item.quantity}
                     </td>
-                    <td className="border border-gray-800 px-3 py-2">
+                    <td className="border border-gray-800 px-3 py-2 text-gray-700">
                       <p className="font-medium">{item.product.name}</p>
                       <p className="text-xs text-gray-600">{item.product.type}</p>
                     </td>
-                    <td className="border border-gray-800 px-3 py-2 text-right">
+                    <td className="border border-gray-800 px-3 py-2 text-right text-gray-700">
                       {item.customPrice.toLocaleString("id-ID")}
                     </td>
-                    <td className="border border-gray-800 px-3 py-2 text-right">
+                    <td className="border border-gray-800 px-3 py-2 text-right text-gray-700">
                       {(item.customPrice * item.quantity).toLocaleString("id-ID")}
                     </td>
                   </tr>
@@ -106,10 +121,50 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
             </table>
           </div>
 
-          {/* Footer */}
-          <div className="text-center text-sm text-gray-500 mt-8">
+          {/* Footer Section */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* Left Column - Bank Details and Warranty */}
+            <div>
+              <div className="border-2 border-gray-800 p-3 mb-3">
+                <p className="text-sm font-semibold text-gray-700 mb-2">REKENING BANK:</p>
+                <p className="text-sm text-gray-700">BCA: 1234567890</p>
+                <p className="text-sm text-gray-700">Mandiri: 0987654321</p>
+              </div>
+              <div className="border-2 border-gray-800 p-3">
+                <p className="text-sm font-semibold text-gray-700 mb-2">GARANSI:</p>
+                <p className="text-sm text-gray-700">Sesuai ketentuan pabrik</p>
+              </div>
+            </div>
+
+            {/* Right Column - Payment Details */}
+            <div>
+              <div className="border-2 border-gray-800 p-3 mb-3">
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-700">JUMLAH:</p>
+                  <p className="text-sm text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
+                  <p className="text-sm text-gray-700">Rp 0</p>
+                </div>
+                <div className="flex justify-between border-t-2 border-gray-800 pt-2">
+                  <p className="text-sm font-bold text-gray-700">SISA:</p>
+                  <p className="text-sm font-bold text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
+                </div>
+              </div>
+              
+              {/* Signature Section */}
+              <div className="border-2 border-gray-800 p-3">
+                <p className="text-sm text-center text-gray-700 mb-12">Hormat Kami,</p>
+                <p className="text-sm text-center text-gray-700 font-semibold">_____________</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Note */}
+          <div className="text-center text-xs text-gray-500 mt-4">
             <p>Terima kasih atas kunjungan Anda!</p>
-            <p>Toko Aki - Solusi Aki Terpercaya</p>
+            <p>Dr. Battery - Solusi Aki Terpercaya</p>
           </div>
         </div>
 
