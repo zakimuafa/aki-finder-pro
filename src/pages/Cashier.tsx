@@ -24,6 +24,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Invoice from "@/components/Invoice";
 
 interface Product {
   id: string;
@@ -58,6 +59,8 @@ const Cashier = () => {
   const [transactionDate, setTransactionDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [processedCart, setProcessedCart] = useState<CartItem[]>([]);
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -203,6 +206,10 @@ const Cashier = () => {
         title: "Berhasil",
         description: "Transaksi berhasil diproses",
       });
+
+      // Show invoice with the processed cart
+      setProcessedCart([...cart]);
+      setShowInvoice(true);
 
       setCart([]);
       loadProducts();
@@ -393,9 +400,9 @@ const Cashier = () => {
                             )}
                             <p className="text-sm text-muted-foreground">
                               Tanggal:{" "}
-                              {new Date(item.transactionDate).toLocaleDateString(
-                                "id-ID"
-                              )}
+                              {new Date(
+                                item.transactionDate
+                              ).toLocaleDateString("id-ID")}
                             </p>
                             <p className="text-sm text-foreground">
                               Rp {item.customPrice!.toLocaleString("id-ID")} x{" "}
@@ -446,6 +453,17 @@ const Cashier = () => {
           </div>
         </div>
       </div>
+
+      {showInvoice && (
+        <Invoice
+          cart={processedCart}
+          total={processedCart.reduce(
+            (total, item) => total + item.customPrice * item.quantity,
+            0
+          )}
+          onClose={() => setShowInvoice(false)}
+        />
+      )}
     </div>
   );
 };
