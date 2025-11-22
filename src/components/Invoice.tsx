@@ -42,7 +42,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
           {/* Invoice Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h1>
-            <h2 className="text-xl font-semibold text-gray-600">Toko Aki</h2>
+            <h2 className="text-xl font-semibold text-gray-600">DR Battery</h2>
             <p className="text-sm text-gray-500">
               Tanggal: {new Date().toLocaleDateString("id-ID")}
             </p>
@@ -120,7 +120,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
           {/* Footer */}
           <div className="text-center text-sm text-gray-500 mt-8">
             <p>Terima kasih atas kunjungan Anda!</p>
-            <p>Toko Aki - Solusi Aki Terpercaya</p>
+            <p> DR Battery- Solusi Aki Terpercaya</p>
           </div>
         </div>
 
