@@ -151,7 +151,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
             {/* Right Column - Payment Details */}
             <div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2 min-h-[105px] flex flex-col justify-between">
+              <div className="border-2 border-gray-800 p-1.5 mb-2 min-h-[85px] flex flex-col justify-between">
                 <div className="flex justify-between">
                   <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
                   <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
