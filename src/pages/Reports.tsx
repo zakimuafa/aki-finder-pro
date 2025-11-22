@@ -24,22 +24,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface SalesReport {
-  product_id: string;
-  product_name: string;
-  product_type: string;
-  category: string;
-  total_quantity: number;
-  total_revenue: number;
-  sales_ids: string[]; // Track individual sale IDs for deletion
-}
-
-interface DetailedSale {
+interface SaleTransaction {
   id: string;
   product_name: string;
   product_type: string;
   category: string;
-  customer_name: string;
+  customer_name: string | null;
   sale_date: string;
   quantity: number;
   total_price: number;
@@ -53,8 +43,7 @@ const Reports = () => {
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [period, setPeriod] = useState<Period>("month");
-  const [reportData, setReportData] = useState<SalesReport[]>([]);
-  const [detailedSales, setDetailedSales] = useState<DetailedSale[]>([]);
+  const [transactions, setTransactions] = useState<SaleTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -98,7 +87,6 @@ const Reports = () => {
         .select(
           `
           id,
-          product_id,
           quantity,
           total_price,
           customer_name,
@@ -115,33 +103,20 @@ const Reports = () => {
 
       if (error) throw error;
 
-      // Aggregate data by product
-      const aggregated: { [key: string]: SalesReport } = {};
+      // Map to transaction format
+      const transactions: SaleTransaction[] =
+        salesData?.map((sale: any) => ({
+          id: sale.id,
+          product_name: sale.products.name,
+          product_type: sale.products.type,
+          category: sale.products.category,
+          customer_name: sale.customer_name,
+          sale_date: sale.sale_date,
+          quantity: sale.quantity,
+          total_price: sale.total_price,
+        })) || [];
 
-      salesData?.forEach((sale: any) => {
-        const productId = sale.product_id;
-        if (!aggregated[productId]) {
-          aggregated[productId] = {
-            product_id: productId,
-            product_name: sale.products.name,
-            product_type: sale.products.type,
-            category: sale.products.category,
-            total_quantity: 0,
-            total_revenue: 0,
-            sales_ids: [],
-          };
-        }
-        aggregated[productId].total_quantity += sale.quantity;
-        aggregated[productId].total_revenue += sale.total_price;
-        aggregated[productId].sales_ids.push(sale.id);
-      });
-
-      // Convert to array and sort by quantity
-      const sorted = Object.values(aggregated).sort(
-        (a, b) => b.total_quantity - a.total_quantity
-      );
-
-      setReportData(sorted);
+      setTransactions(transactions);
     } catch (error) {
       console.error("Error loading report:", error);
     } finally {
@@ -160,12 +135,11 @@ const Reports = () => {
     }
   };
 
-  const handleDeleteSales = async (salesIds: string[], productName: string) => {
-    if (
-      !confirm(
-        `Yakin ingin menghapus semua transaksi penjualan untuk ${productName}?`
-      )
-    ) {
+  const handleDeleteTransaction = async (
+    transactionId: string,
+    productName: string
+  ) => {
+    if (!confirm(`Yakin ingin menghapus transaksi ${productName}?`)) {
       return;
     }
 
@@ -173,13 +147,13 @@ const Reports = () => {
       const { error } = await supabase
         .from("sales")
         .delete()
-        .in("id", salesIds);
+        .eq("id", transactionId);
 
       if (error) throw error;
 
       toast({
         title: "Berhasil",
-        description: "Transaksi penjualan berhasil dihapus",
+        description: "Transaksi berhasil dihapus",
       });
 
       loadReport();
@@ -248,7 +222,7 @@ const Reports = () => {
                 <p className="text-center text-muted-foreground py-8">
                   Loading...
                 </p>
-              ) : reportData.length === 0 ? (
+              ) : transactions.length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
                   Belum ada data penjualan untuk periode ini
                 </p>
@@ -257,42 +231,51 @@ const Reports = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-12">Rank</TableHead>
+                        <TableHead>Tanggal</TableHead>
                         <TableHead>Nama Produk</TableHead>
                         <TableHead>Tipe</TableHead>
                         <TableHead>Kategori</TableHead>
-                        <TableHead className="text-right">Terjual</TableHead>
-                        <TableHead className="text-right">
-                          Total Pendapatan
-                        </TableHead>
+                        <TableHead>Customer</TableHead>
+                        <TableHead className="text-right">Jumlah</TableHead>
+                        <TableHead className="text-right">Total Harga</TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reportData.map((item, index) => (
-                        <TableRow key={item.product_id}>
-                          <TableCell className="font-bold text-primary">
-                            #{index + 1}
+                      {transactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
+                          <TableCell>
+                            {new Date(transaction.sale_date).toLocaleDateString(
+                              "id-ID",
+                              {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}
                           </TableCell>
                           <TableCell className="font-medium">
-                            {item.product_name}
+                            {transaction.product_name}
                           </TableCell>
-                          <TableCell>{item.product_type}</TableCell>
-                          <TableCell>{item.category}</TableCell>
+                          <TableCell>{transaction.product_type}</TableCell>
+                          <TableCell>{transaction.category}</TableCell>
+                          <TableCell>
+                            {transaction.customer_name || "-"}
+                          </TableCell>
                           <TableCell className="text-right font-semibold">
-                            {item.total_quantity} unit
+                            {transaction.quantity} unit
                           </TableCell>
                           <TableCell className="text-right font-semibold text-primary">
-                            Rp {item.total_revenue.toLocaleString("id-ID")}
+                            Rp {transaction.total_price.toLocaleString("id-ID")}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() =>
-                                handleDeleteSales(
-                                  item.sales_ids,
-                                  item.product_name
+                                handleDeleteTransaction(
+                                  transaction.id,
+                                  transaction.product_name
                                 )
                               }
                             >
