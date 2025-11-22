@@ -125,51 +125,53 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
           </div>
 
           {/* Footer Section */}
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            {/* Left Column - Bank Details and Warranty */}
-            <div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2">
-                <p className="text-xs font-semibold text-gray-700 mb-1">REKENING BANK:</p>
-                <p className="text-xs text-gray-700">BCA: 3370720397</p>
+          <div className="mb-3">
+            <div className="grid grid-cols-2 gap-2">
+              {/* Left Column - Bank Details and Warranty */}
+              <div className="space-y-2">
+                <div className="border-2 border-gray-800 p-1.5">
+                  <p className="text-xs font-semibold text-gray-700 mb-1">REKENING BANK:</p>
+                  <p className="text-xs text-gray-700">BCA: 3370720397</p>
+                </div>
+                <div className="border-2 border-gray-800 p-1.5">
+                  <p className="text-xs font-semibold text-gray-700 mb-1">GARANSI:</p>
+                  <p className="text-xs text-gray-700">
+                    {cart[0]?.warrantyMonths} Bulan
+                  </p>
+                  <p className="text-xs text-gray-700">
+                    S/d: {cart[0] && getWarrantyEndDate(cart[0].transactionDate, cart[0].warrantyMonths)}
+                  </p>
+                </div>
               </div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2 h-[70px]">
-                <p className="text-xs font-semibold text-gray-700 mb-1">GARANSI:</p>
-                <p className="text-xs text-gray-700">
-                  {cart[0]?.warrantyMonths} Bulan
-                </p>
-                <p className="text-xs text-gray-700">
-                  S/d: {cart[0] && getWarrantyEndDate(cart[0].transactionDate, cart[0].warrantyMonths)}
-                </p>
-              </div>
-              
-              {/* Penerima Section */}
-              <div className="mt-2">
-                <p className="text-xs text-center text-gray-700 mb-8">Penerima,</p>
-                <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
+
+              {/* Right Column - Payment Details */}
+              <div className="h-full">
+                <div className="border-2 border-gray-800 p-1.5 h-full flex flex-col justify-between">
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
+                    <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-sm font-semibold text-gray-700">JUMLAH:</p>
+                    <p className="text-sm text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
+                  </div>
+                  <div className="flex justify-between border-t-2 border-gray-800 pt-1 mt-1">
+                    <p className="text-sm font-bold text-gray-700">TOTAL:</p>
+                    <p className="text-sm font-bold text-gray-700">Rp {(getTotalPrice() - (cart[0]?.downPayment || 0)).toLocaleString("id-ID")}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Right Column - Payment Details */}
-            <div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2 h-[70px] flex flex-col justify-between">
-                <div className="flex justify-between">
-                  <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
-                  <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
-                </div>
-                <div className="flex justify-between">
-                  <p className="text-sm font-semibold text-gray-700">JUMLAH:</p>
-                  <p className="text-sm text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
-                </div>
-                <div className="flex justify-between border-t-2 border-gray-800 pt-1 mt-1">
-                  <p className="text-sm font-bold text-gray-700">TOTAL:</p>
-                  <p className="text-sm font-bold text-gray-700">Rp {(getTotalPrice() - (cart[0]?.downPayment || 0)).toLocaleString("id-ID")}</p>
-                </div>
+            {/* Signature Row */}
+            <div className="mt-4 flex justify-between px-8">
+              <div className="w-1/2 text-center">
+                <p className="text-xs text-gray-700 mb-8">Penerima,</p>
+                <p className="text-xs text-gray-700 font-semibold">_____________</p>
               </div>
-              
-              {/* Signature Section */}
-              <div className="mt-2">
-                <p className="text-xs text-center text-gray-700 mb-8">Hormat Kami,</p>
-                <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
+              <div className="w-1/2 text-center">
+                <p className="text-xs text-gray-700 mb-8">Hormat Kami,</p>
+                <p className="text-xs text-gray-700 font-semibold">_____________</p>
               </div>
             </div>
           </div>
