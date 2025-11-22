@@ -132,7 +132,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
                 <p className="text-xs font-semibold text-gray-700 mb-1">REKENING BANK:</p>
                 <p className="text-xs text-gray-700">BCA: 3370720397</p>
               </div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2">
+              <div className="border-2 border-gray-800 p-1.5 mb-2 h-[70px]">
                 <p className="text-xs font-semibold text-gray-700 mb-1">GARANSI:</p>
                 <p className="text-xs text-gray-700">
                   {cart[0]?.warrantyMonths} Bulan
@@ -143,7 +143,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               </div>
               
               {/* Penerima Section */}
-              <div className="mt-2">
+              <div className="mt-3">
                 <p className="text-xs text-center text-gray-700 mb-8">Penerima,</p>
                 <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
               </div>
@@ -151,7 +151,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
             {/* Right Column - Payment Details */}
             <div>
-              <div className="border-2 border-gray-800 p-1.5 mb-2 min-h-[85px] flex flex-col justify-between">
+              <div className="border-2 border-gray-800 p-1.5 mb-2 h-[70px] flex flex-col justify-between">
                 <div className="flex justify-between">
                   <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
                   <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
@@ -167,7 +167,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               </div>
               
               {/* Signature Section */}
-              <div className="mt-2">
+              <div className="mt-3">
                 <p className="text-xs text-center text-gray-700 mb-8">Hormat Kami,</p>
                 <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
               </div>
