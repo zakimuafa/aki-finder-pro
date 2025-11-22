@@ -143,7 +143,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               </div>
               
               {/* Penerima Section */}
-              <div className="mt-3">
+              <div className="mt-2">
                 <p className="text-xs text-center text-gray-700 mb-8">Penerima,</p>
                 <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
               </div>
@@ -167,7 +167,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               </div>
               
               {/* Signature Section */}
-              <div className="mt-3">
+              <div className="mt-2">
                 <p className="text-xs text-center text-gray-700 mb-8">Hormat Kami,</p>
                 <p className="text-xs text-center text-gray-700 font-semibold">_____________</p>
               </div>
