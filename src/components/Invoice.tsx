@@ -52,15 +52,15 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               <img src={logo} alt="Logo" className="w-20 h-20" />
               <div>
                 <h1 className="text-4xl font-bold text-blue-600 mb-1">Dr. Battery</h1>
-                <p className="text-sm text-gray-700">Jl. Raya No. 123, Jakarta</p>
-                <p className="text-sm text-gray-700">Telp: 021-12345678</p>
+                <p className="text-sm text-gray-700">Jl. Raya Banjaran barat no 154  Kab.Bandung</p>
+                <p className="text-sm text-gray-700">Telp:085220361903/089677696426</p>
               </div>
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-700">
                 Tanggal: {cart[0]?.transactionDate || new Date().toLocaleDateString("id-ID")}
               </p>
-              <p className="text-sm text-gray-700">Jakarta</p>
+              <p className="text-sm text-gray-700">Bandung</p>
             </div>
           </div>
 
@@ -130,8 +130,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
             <div>
               <div className="border-2 border-gray-800 p-3 mb-3">
                 <p className="text-sm font-semibold text-gray-700 mb-2">REKENING BANK:</p>
-                <p className="text-sm text-gray-700">BCA: 1234567890</p>
-                <p className="text-sm text-gray-700">Mandiri: 0987654321</p>
+                <p className="text-sm text-gray-700">BCA: 3370720397</p>
               </div>
               <div className="border-2 border-gray-800 p-3">
                 <p className="text-sm font-semibold text-gray-700 mb-2">GARANSI:</p>
