@@ -189,6 +189,11 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
       </div>
 
       <style>{`
+        @page {
+          size: landscape;
+          margin: 1cm;
+        }
+        
         @media print {
           body * {
             visibility: hidden;
