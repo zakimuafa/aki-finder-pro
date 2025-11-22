@@ -39,6 +39,7 @@ interface CartItem {
   quantity: number;
   customPrice: number;
   customerName?: string;
+  transactionDate: string;
 }
 
 const Cashier = () => {
@@ -54,6 +55,9 @@ const Cashier = () => {
   const [open, setOpen] = useState(false);
   const [customPrice, setCustomPrice] = useState("");
   const [customerName, setCustomerName] = useState("");
+  const [transactionDate, setTransactionDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -132,6 +136,7 @@ const Cashier = () => {
                 quantity: newQuantity,
                 customPrice: customPriceNum,
                 customerName: customerNameStr,
+                transactionDate,
               }
             : item
         )
@@ -144,6 +149,7 @@ const Cashier = () => {
           quantity,
           customPrice: customPriceNum,
           customerName: customerNameStr,
+          transactionDate,
         },
       ]);
     }
@@ -152,6 +158,7 @@ const Cashier = () => {
     setQuantity(1);
     setCustomPrice("");
     setCustomerName("");
+    setTransactionDate(new Date().toISOString().split("T")[0]);
   };
 
   const removeFromCart = (productId: string) => {
@@ -185,6 +192,7 @@ const Cashier = () => {
         total_price: item.customPrice * item.quantity,
         created_by: user?.id,
         customer_name: item.customerName,
+        sale_date: item.transactionDate,
       }));
 
       const { error } = await supabase.from("sales").insert(salesData);
@@ -334,6 +342,17 @@ const Cashier = () => {
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="transactionDate">Tanggal Transaksi</Label>
+                  <Input
+                    id="transactionDate"
+                    type="date"
+                    value={transactionDate}
+                    onChange={(e) => setTransactionDate(e.target.value)}
+                    required
+                  />
+                </div>
+
                 <Button onClick={addToCart} className="w-full">
                   Tambah ke Keranjang
                 </Button>
@@ -366,6 +385,17 @@ const Cashier = () => {
                             </h3>
                             <p className="text-sm text-muted-foreground">
                               {item.product.type} - {item.product.category}
+                            </p>
+                            {item.customerName && (
+                              <p className="text-sm text-foreground font-medium">
+                                Customer: {item.customerName}
+                              </p>
+                            )}
+                            <p className="text-sm text-muted-foreground">
+                              Tanggal:{" "}
+                              {new Date(item.transactionDate).toLocaleDateString(
+                                "id-ID"
+                              )}
                             </p>
                             <p className="text-sm text-foreground">
                               Rp {item.customPrice!.toLocaleString("id-ID")} x{" "}
