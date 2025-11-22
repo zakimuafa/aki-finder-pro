@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
-import logo from "@/assets/logo-toko-aki.png";
+import logo from "@/assets/logo-toko-aki-new.jpg";
 
 interface CartItem {
   product: {
