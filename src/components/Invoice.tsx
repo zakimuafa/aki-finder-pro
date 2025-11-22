@@ -59,7 +59,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
             </div>
             <div className="text-right">
               <p className="text-xs text-gray-700">
-                Tanggal: {cart[0]?.transactionDate || new Date().toLocaleDateString("id-ID")}
+                Tanggal: {cart[0]?.transactionDate ? new Date(cart[0].transactionDate).toLocaleDateString("id-ID", { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString("id-ID", { day: '2-digit', month: '2-digit', year: 'numeric' })}
               </p>
               <p className="text-xs text-gray-700">Bandung</p>
             </div>
@@ -132,7 +132,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
                 <p className="text-xs font-semibold text-gray-700 mb-1">REKENING BANK:</p>
                 <p className="text-xs text-gray-700">BCA: 3370720397</p>
               </div>
-              <div className="border-2 border-gray-800 p-1.5">
+              <div className="border-2 border-gray-800 p-2 h-[110px]">
                 <p className="text-xs font-semibold text-gray-700 mb-1">GARANSI:</p>
                 <p className="text-xs text-gray-700">
                   {cart[0]?.warrantyMonths} Bulan
@@ -145,12 +145,12 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
             {/* Right Column - Payment Details */}
             <div>
-              <div className="border-2 border-gray-800 p-2 mb-2">
-                <div className="flex justify-between mb-2">
+              <div className="border-2 border-gray-800 p-2 mb-2 h-[110px] flex flex-col justify-between">
+                <div className="flex justify-between">
                   <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
                   <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
                 </div>
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between">
                   <p className="text-sm font-semibold text-gray-700">JUMLAH:</p>
                   <p className="text-sm text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
                 </div>
