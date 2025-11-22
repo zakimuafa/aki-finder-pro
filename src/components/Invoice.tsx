@@ -80,16 +80,16 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
             <table className="w-full border-collapse border-2 border-gray-800">
               <thead>
                 <tr className="bg-gray-700 text-white">
-                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                  <th className="border border-gray-800 px-2 py-1 text-center font-semibold w-[10%]">
                     Banyaknya
                   </th>
-                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                  <th className="border border-gray-800 px-2 py-1 text-center font-semibold w-[50%]">
                     Nama Barang
                   </th>
-                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                  <th className="border border-gray-800 px-2 py-1 text-center font-semibold w-[20%]">
                     Harga
                   </th>
-                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                  <th className="border border-gray-800 px-2 py-1 text-center font-semibold w-[20%]">
                     Jumlah
                   </th>
                 </tr>
@@ -97,17 +97,16 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               <tbody>
                 {cart.map((item, index) => (
                   <tr key={index}>
-                    <td className="border border-gray-800 px-3 py-2 text-center text-gray-700">
+                    <td className="border border-gray-800 px-2 py-1 text-center text-gray-700">
                       {item.quantity}
                     </td>
-                    <td className="border border-gray-800 px-3 py-2 text-gray-700">
-                      <p className="font-medium">{item.product.name}</p>
-                      <p className="text-xs text-gray-600">{item.product.type}</p>
+                    <td className="border border-gray-800 px-2 py-1 text-gray-700">
+                      {item.product.name}
                     </td>
-                    <td className="border border-gray-800 px-3 py-2 text-right text-gray-700">
+                    <td className="border border-gray-800 px-2 py-1 text-right text-gray-700">
                       {item.customPrice.toLocaleString("id-ID")}
                     </td>
-                    <td className="border border-gray-800 px-3 py-2 text-right text-gray-700">
+                    <td className="border border-gray-800 px-2 py-1 text-right text-gray-700">
                       {(item.customPrice * item.quantity).toLocaleString("id-ID")}
                     </td>
                   </tr>
@@ -115,10 +114,10 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
                 {/* Empty rows for spacing */}
                 {[...Array(Math.max(0, 8 - cart.length))].map((_, i) => (
                   <tr key={`empty-${i}`}>
-                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
-                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
-                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
-                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
+                    <td className="border border-gray-800 px-2 py-2">&nbsp;</td>
+                    <td className="border border-gray-800 px-2 py-2">&nbsp;</td>
+                    <td className="border border-gray-800 px-2 py-2">&nbsp;</td>
+                    <td className="border border-gray-800 px-2 py-2">&nbsp;</td>
                   </tr>
                 ))}
               </tbody>
