@@ -37,90 +37,113 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div id="invoice-content" className="print:block">
           {/* Invoice Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h1>
-            <h2 className="text-xl font-semibold text-gray-600">Toko Aki</h2>
-            <p className="text-sm text-gray-500">
-              Tanggal: {new Date().toLocaleDateString("id-ID")}
-            </p>
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-start gap-4">
+              <img src="/logo-toko-aki.png" alt="Logo" className="w-20 h-20" />
+              <div>
+                <h1 className="text-4xl font-bold text-blue-600 mb-1">Dr. Battery</h1>
+                <div className="text-xs text-gray-600 space-y-0.5">
+                  <p># WET BATTERY (AKI BASAH)</p>
+                  <p># HYBRID (RENDAH PERAWATAN)</p>
+                  <p># MF BATTERY KERING</p>
+                </div>
+                <p className="text-sm mt-2 text-gray-700">
+                  ☎ 085 220 361 903 , 089 677 696 426
+                </p>
+              </div>
+            </div>
+            <div className="text-right text-sm">
+              <p className="mb-2">
+                Bandung, {cart[0]?.transactionDate ? new Date(cart[0].transactionDate).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "..........................."} {new Date().getFullYear()} ...........
+              </p>
+              <div className="border-t border-gray-400 pt-2 mt-2">
+                <p className="font-semibold">TUAN</p>
+                <p className="font-semibold">TOKO</p>
+              </div>
+              <p className="mt-2 border-t border-gray-400 pt-2">
+                {cart[0]?.customerName || "......................................................."}
+              </p>
+              <p className="border-t border-gray-400 pt-2 mt-2">
+                .......................................................
+              </p>
+            </div>
           </div>
 
-          {/* Customer Info */}
-          {cart[0]?.customerName && (
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-700 mb-2">Kepada:</h3>
-              <p className="text-gray-600">{cart[0].customerName}</p>
-            </div>
-          )}
-
-          {/* Transaction Details */}
+          {/* Transaction Table */}
           <div className="mb-6">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border-2 border-gray-800">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-300 px-4 py-2 text-left">
-                    Produk
+                <tr className="bg-gray-700 text-white">
+                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                    Banyaknya
                   </th>
-                  <th className="border border-gray-300 px-4 py-2 text-center">
-                    Qty
+                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                    Nama Barang
                   </th>
-                  <th className="border border-gray-300 px-4 py-2 text-right">
+                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
                     Harga
                   </th>
-                  <th className="border border-gray-300 px-4 py-2 text-right">
-                    Total
+                  <th className="border border-gray-800 px-3 py-2 text-center font-semibold">
+                    Jumlah
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {cart.map((item, index) => (
                   <tr key={index}>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <div>
-                        <p className="font-medium">{item.product.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {item.product.type}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2 text-center">
+                    <td className="border border-gray-800 px-3 py-2 text-center">
                       {item.quantity}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-right">
-                      Rp {item.customPrice.toLocaleString("id-ID")}
+                    <td className="border border-gray-800 px-3 py-2">
+                      <p className="font-medium">{item.product.name}</p>
+                      <p className="text-xs text-gray-600">{item.product.type}</p>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-right">
-                      Rp{" "}
-                      {(item.customPrice * item.quantity).toLocaleString(
-                        "id-ID"
-                      )}
+                    <td className="border border-gray-800 px-3 py-2 text-right">
+                      {item.customPrice.toLocaleString("id-ID")}
+                    </td>
+                    <td className="border border-gray-800 px-3 py-2 text-right">
+                      {(item.customPrice * item.quantity).toLocaleString("id-ID")}
                     </td>
                   </tr>
                 ))}
+                {/* Empty rows for spacing */}
+                {[...Array(Math.max(0, 8 - cart.length))].map((_, i) => (
+                  <tr key={`empty-${i}`}>
+                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
+                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
+                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
+                    <td className="border border-gray-800 px-3 py-4">&nbsp;</td>
+                  </tr>
+                ))}
               </tbody>
-              <tfoot>
-                <tr className="bg-gray-50">
-                  <td
-                    colSpan={3}
-                    className="border border-gray-300 px-4 py-2 text-right font-bold"
-                  >
-                    Total
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-right font-bold">
-                    Rp {getTotalPrice().toLocaleString("id-ID")}
-                  </td>
-                </tr>
-              </tfoot>
             </table>
           </div>
 
-          {/* Footer */}
-          <div className="text-center text-sm text-gray-500 mt-8">
-            <p>Terima kasih atas kunjungan Anda!</p>
-            <p>Toko Aki - Solusi Aki Terpercaya</p>
+          {/* Footer Section */}
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="font-semibold mb-1">Nomor Rekening</p>
+              <p className="text-blue-600 font-semibold">BCA.337 0720397</p>
+              <p className="text-xs">a.n Dany Ramdani</p>
+            </div>
+            <div className="text-center">
+              <p className="mb-1">Garansi :</p>
+              <p className="mb-4">Bulan :</p>
+              <p className="text-xs mt-8">Penerima,</p>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold mb-1">Jumlah</p>
+              <p className="font-semibold mb-1">Uang Muka</p>
+              <p className="border-t border-gray-400 pt-1 font-bold text-lg">
+                {getTotalPrice().toLocaleString("id-ID")}
+              </p>
+              <p className="font-semibold mb-1">Sisa</p>
+              <p className="border-t border-gray-400 pt-1"></p>
+              <p className="text-xs mt-4">Hormat Kami,</p>
+            </div>
           </div>
         </div>
 
@@ -136,7 +159,7 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @media print {
           body * {
             visibility: hidden;
