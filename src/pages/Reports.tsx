@@ -34,6 +34,17 @@ interface SalesReport {
   sales_ids: string[]; // Track individual sale IDs for deletion
 }
 
+interface DetailedSale {
+  id: string;
+  product_name: string;
+  product_type: string;
+  category: string;
+  customer_name: string;
+  sale_date: string;
+  quantity: number;
+  total_price: number;
+}
+
 type Period = "week" | "month" | "year";
 
 const Reports = () => {
@@ -43,6 +54,7 @@ const Reports = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [period, setPeriod] = useState<Period>("month");
   const [reportData, setReportData] = useState<SalesReport[]>([]);
+  const [detailedSales, setDetailedSales] = useState<DetailedSale[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -89,6 +101,8 @@ const Reports = () => {
           product_id,
           quantity,
           total_price,
+          customer_name,
+          sale_date,
           products (
             name,
             type,
@@ -147,7 +161,11 @@ const Reports = () => {
   };
 
   const handleDeleteSales = async (salesIds: string[], productName: string) => {
-    if (!confirm(`Yakin ingin menghapus semua transaksi penjualan untuk ${productName}?`)) {
+    if (
+      !confirm(
+        `Yakin ingin menghapus semua transaksi penjualan untuk ${productName}?`
+      )
+    ) {
       return;
     }
 
@@ -244,7 +262,9 @@ const Reports = () => {
                         <TableHead>Tipe</TableHead>
                         <TableHead>Kategori</TableHead>
                         <TableHead className="text-right">Terjual</TableHead>
-                        <TableHead className="text-right">Total Pendapatan</TableHead>
+                        <TableHead className="text-right">
+                          Total Pendapatan
+                        </TableHead>
                         <TableHead className="text-right">Aksi</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -269,7 +289,12 @@ const Reports = () => {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => handleDeleteSales(item.sales_ids, item.product_name)}
+                              onClick={() =>
+                                handleDeleteSales(
+                                  item.sales_ids,
+                                  item.product_name
+                                )
+                              }
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
