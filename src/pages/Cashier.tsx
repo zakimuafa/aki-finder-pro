@@ -49,6 +49,7 @@ interface CartItem {
   customerName?: string;
   transactionDate: string;
   warrantyMonths: number;
+  downPayment: number;
 }
 
 const Cashier = () => {
@@ -68,6 +69,7 @@ const Cashier = () => {
     new Date().toISOString().split("T")[0]
   );
   const [warrantyMonths, setWarrantyMonths] = useState<number>(6);
+  const [downPayment, setDownPayment] = useState("");
   const [showInvoice, setShowInvoice] = useState(false);
   const [processedCart, setProcessedCart] = useState<CartItem[]>([]);
 
@@ -128,6 +130,7 @@ const Cashier = () => {
 
     const customPriceNum = parseFloat(customPrice);
     const customerNameStr = customerName.trim() || undefined;
+    const downPaymentNum = downPayment ? parseFloat(downPayment) : 0;
 
     const existingItem = cart.find((item) => item.product.id === product.id);
     if (existingItem) {
@@ -150,6 +153,7 @@ const Cashier = () => {
                 customerName: customerNameStr,
                 transactionDate,
                 warrantyMonths,
+                downPayment: downPaymentNum,
               }
             : item
         )
@@ -164,6 +168,7 @@ const Cashier = () => {
           customerName: customerNameStr,
           transactionDate,
           warrantyMonths,
+          downPayment: downPaymentNum,
         },
       ]);
     }
@@ -174,6 +179,7 @@ const Cashier = () => {
     setCustomerName("");
     setTransactionDate(new Date().toISOString().split("T")[0]);
     setWarrantyMonths(6);
+    setDownPayment("");
   };
 
   const removeFromCart = (productId: string) => {
@@ -209,6 +215,7 @@ const Cashier = () => {
         customer_name: item.customerName,
         sale_date: item.transactionDate,
         warranty_months: item.warrantyMonths,
+        down_payment: item.downPayment,
       }));
 
       const { error } = await supabase.from("sales").insert(salesData);
@@ -389,6 +396,18 @@ const Cashier = () => {
                   </Select>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="downPayment">Uang Muka (Opsional)</Label>
+                  <Input
+                    id="downPayment"
+                    type="number"
+                    min="0"
+                    placeholder="Masukkan uang muka"
+                    value={downPayment}
+                    onChange={(e) => setDownPayment(e.target.value)}
+                  />
+                </div>
+
                 <Button onClick={addToCart} className="w-full">
                   Tambah ke Keranjang
                 </Button>
@@ -436,6 +455,11 @@ const Cashier = () => {
                             <p className="text-sm text-muted-foreground">
                               Garansi: {item.warrantyMonths} bulan
                             </p>
+                            {item.downPayment > 0 && (
+                              <p className="text-sm text-foreground font-medium">
+                                Uang Muka: Rp {item.downPayment.toLocaleString("id-ID")}
+                              </p>
+                            )}
                             <p className="text-sm text-foreground">
                               Rp {item.customPrice!.toLocaleString("id-ID")} x{" "}
                               {item.quantity}
