@@ -16,6 +16,7 @@ interface CartItem {
   customerName?: string;
   transactionDate: string;
   warrantyMonths: number;
+  downPayment: number;
 }
 
 interface InvoiceProps {
@@ -152,11 +153,11 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
                 </div>
                 <div className="flex justify-between mb-2">
                   <p className="text-sm font-semibold text-gray-700">UANG MUKA:</p>
-                  <p className="text-sm text-gray-700">Rp 0</p>
+                  <p className="text-sm text-gray-700">Rp {(cart[0]?.downPayment || 0).toLocaleString("id-ID")}</p>
                 </div>
                 <div className="flex justify-between border-t-2 border-gray-800 pt-2">
                   <p className="text-sm font-bold text-gray-700">SISA:</p>
-                  <p className="text-sm font-bold text-gray-700">Rp {getTotalPrice().toLocaleString("id-ID")}</p>
+                  <p className="text-sm font-bold text-gray-700">Rp {(getTotalPrice() - (cart[0]?.downPayment || 0)).toLocaleString("id-ID")}</p>
                 </div>
               </div>
               
