@@ -21,6 +21,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart, Trash2, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,6 +48,7 @@ interface CartItem {
   customPrice: number;
   customerName?: string;
   transactionDate: string;
+  warrantyMonths: number;
 }
 
 const Cashier = () => {
@@ -59,6 +67,7 @@ const Cashier = () => {
   const [transactionDate, setTransactionDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [warrantyMonths, setWarrantyMonths] = useState<number>(6);
   const [showInvoice, setShowInvoice] = useState(false);
   const [processedCart, setProcessedCart] = useState<CartItem[]>([]);
 
@@ -140,6 +149,7 @@ const Cashier = () => {
                 customPrice: customPriceNum,
                 customerName: customerNameStr,
                 transactionDate,
+                warrantyMonths,
               }
             : item
         )
@@ -153,6 +163,7 @@ const Cashier = () => {
           customPrice: customPriceNum,
           customerName: customerNameStr,
           transactionDate,
+          warrantyMonths,
         },
       ]);
     }
@@ -162,6 +173,7 @@ const Cashier = () => {
     setCustomPrice("");
     setCustomerName("");
     setTransactionDate(new Date().toISOString().split("T")[0]);
+    setWarrantyMonths(6);
   };
 
   const removeFromCart = (productId: string) => {
@@ -196,6 +208,7 @@ const Cashier = () => {
         created_by: user?.id,
         customer_name: item.customerName,
         sale_date: item.transactionDate,
+        warranty_months: item.warrantyMonths,
       }));
 
       const { error } = await supabase.from("sales").insert(salesData);
@@ -360,6 +373,22 @@ const Cashier = () => {
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="warranty">Garansi</Label>
+                  <Select
+                    value={warrantyMonths.toString()}
+                    onValueChange={(value) => setWarrantyMonths(Number(value))}
+                  >
+                    <SelectTrigger id="warranty">
+                      <SelectValue placeholder="Pilih garansi" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="6">6 Bulan</SelectItem>
+                      <SelectItem value="12">12 Bulan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <Button onClick={addToCart} className="w-full">
                   Tambah ke Keranjang
                 </Button>
@@ -403,6 +432,9 @@ const Cashier = () => {
                               {new Date(
                                 item.transactionDate
                               ).toLocaleDateString("id-ID")}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Garansi: {item.warrantyMonths} bulan
                             </p>
                             <p className="text-sm text-foreground">
                               Rp {item.customPrice!.toLocaleString("id-ID")} x{" "}
