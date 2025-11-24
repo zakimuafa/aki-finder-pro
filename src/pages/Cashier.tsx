@@ -390,8 +390,11 @@ const Cashier = () => {
                       <SelectValue placeholder="Pilih garansi" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="6">6 Bulan</SelectItem>
-                      <SelectItem value="12">12 Bulan</SelectItem>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                        <SelectItem key={month} value={month.toString()}>
+                          {month} Bulan
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
