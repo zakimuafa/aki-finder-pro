@@ -130,17 +130,18 @@ const Invoice = ({ cart, total, onClose }: InvoiceProps) => {
               {/* Left Column - Bank Details and Warranty */}
               <div className="space-y-2">
                 <div className="border-2 border-gray-800 p-1.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-1">REKENING BANK:</p>
-                  <p className="text-xs text-gray-700">BCA: 3370720397</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold text-gray-700">REKENING BANK:</p>
+                    <p className="text-xs text-gray-700">BCA: 3370720397</p>
+                  </div>
                 </div>
                 <div className="border-2 border-gray-800 p-1.5">
-                  <p className="text-xs font-semibold text-gray-700 mb-1">GARANSI:</p>
-                  <p className="text-xs text-gray-700">
-                    {cart[0]?.warrantyMonths} Bulan
-                  </p>
-                  <p className="text-xs text-gray-700">
-                    S/d: {cart[0] && getWarrantyEndDate(cart[0].transactionDate, cart[0].warrantyMonths)}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold text-gray-700">GARANSI:</p>
+                    <p className="text-xs text-gray-700">
+                      {cart[0]?.warrantyMonths} Bulan | S/d: {cart[0] && getWarrantyEndDate(cart[0].transactionDate, cart[0].warrantyMonths)}
+                    </p>
+                  </div>
                 </div>
               </div>
 
